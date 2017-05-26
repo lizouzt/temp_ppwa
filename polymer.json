@@ -2,7 +2,7 @@
 	"entrypoint": "index.html",
 	"shell": "src/polymer-app/polymer-app.html",
 	"fragments": [
-		"src/polymer-app/list.html"
+		
 	],
 	"sourceGlobs": [
 		"src/**/*",

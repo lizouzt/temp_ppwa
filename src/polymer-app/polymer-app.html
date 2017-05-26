@@ -354,5 +354,15 @@
         .register('/service-worker.js')
         .then(function() { console.log('Service Worker Registered'); });
     }
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.userChoice.then(function(choiceResult) {
+        if(choiceResult.outcome == 'dismissed') {
+          console.log('User cancelled home screen install');
+        } else {
+          console.log('User added to home screen');
+        }
+      });
+    });
   </script>
 </dom-module>

@@ -3,9 +3,11 @@
   "short_name": "PPAP",
   "description": "======app======",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#123456",
-  "theme_color": "#654321",
+  "orientation": "portrait",
+  "background_color": "#56789a",
+  "theme_color": "#123456",
   "icons": [{
   		"src": "/data/icons/shop-icon-32.png",
   		"sizes": "32x32",
@@ -15,10 +17,14 @@
   		"sizes": "128x128",
   		"type": "image/png"
   	}, {
-  		"src": "/data/icons/shop-icon-192.png",
-  		"sizes": "192x192",
+  		"src": "/data/icons/shop-icon-144.png",
+  		"sizes": "144x144",
   		"type": "image/png"
   	}, {
+      "src": "/data/icons/shop-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }, {
   		"src": "/data/icons/shop-icon-384.png",
   		"sizes": "384x384",
   		"type": "image/png"
