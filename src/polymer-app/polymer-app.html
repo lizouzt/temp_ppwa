@@ -1,0 +1,358 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/paper-search-input/paper-search-input.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/helpers/helpers.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="hot-data.html">
+<link rel="import" href="app-home.html">
+
+<dom-module id="polymer-app">
+  <template>
+    <style>
+      :host {
+        /*box-sizing: border-box;*/
+        display: block;
+        position: relative;
+        padding-top: 130px;
+        padding-bottom: 64px;
+        min-height: 100VH;
+        --app-primary-color: #202020;
+        --app-secondary-color: #757575;
+        --app-accent-color: #172C50;
+        --paper-button-ink-color: var(--app-accent-color);
+        --paper-icon-button-ink-color: var(--app-accent-color);
+        --paper-spinner-color: var(--app-accent-color);
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: var(--app-primary-color);
+      }
+
+      app-header{
+        @apply(--layout-fixed-top);
+        z-index: 1;
+        background-color: rgba(245,248,250,0.95);
+        --app-header-shadow: {
+          box-shadow: inset 0 5px 6px -3px rgba(0,0,0,0.4));
+          height: 10px;
+          bottom: -10px;
+        };
+      }
+
+      paper-icon-button {
+        color: var(--app-primary-color);
+      }
+
+      .left-bar-item{
+        width: 40px;
+      }
+
+      .logo{
+        text-align: center;
+      }
+
+      .logo a{
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: .3em;
+        color: var(--app-primary-color);
+        text-decoration: none;
+        display: inline-block;
+        pointer-events: auto;
+      }
+
+      :host(:not([page=detail])) .back-btn {
+        display: none;
+      }
+
+      .menu-btn{
+        display: none;
+      }
+
+      .cart-btn-container{
+        position: relative;
+        width: 40px;
+      }
+
+      app-drawer {
+        z-index: 3;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        line-height: 40px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+      }
+
+      .drawer-list a(:hover){
+        color: gray;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+
+      /* small screen */
+      @media (max-width: 767px) {
+        :host {
+          padding-top: 64px;
+        }
+
+        .menu-btn {
+          display: block;
+        }
+
+        :host([page=detail]) .menu-btn {
+          display: none;
+        }
+      }
+
+      footer{
+        font-size: .5em;
+        bottom: 0;
+        position: absolute;
+        text-align: center;
+        width: 100vw;
+      }
+
+      paper-search-input{
+        @apply(--layout-fixed-top);
+        line-height: 26px;
+        z-index: 2;
+      }
+    </style>
+    
+    <app-location route="{{route}}"></app-location>
+    <app-route
+      route="{{route}}"
+      pattern="/:page"
+      data="{{routeData}}"
+      tail="{{subRoute}}">
+    </app-route>
+
+    <iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+    <app-header role="navigation" id="header" effects="waterfall" condenses reveals>
+      <app-toolbar>
+        <div class="left-bar-item">
+          <paper-icon-button 
+            class="menu-btn"
+            icon="menu"
+            on-click="_toggleDrawer"
+            aria-label="Categories">
+          </paper-icon-button>
+          <a class="back-btn" href="/list" tabindex='-1'>
+            <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
+          </a>
+        </div>
+
+        <div class="logo" main-title>
+          <a href="/" arial-label="Home Page">赛事旅行</a>
+        </div>
+
+        <div class="search-btn-container">
+          <paper-icon-button 
+            on-click="_toggleSeach"
+            icon="search">
+          </paper-icon-button>
+        </div>
+        
+        <div class="cart-btn-container">
+          <a href="/shop-cart.html" tabindex="-1">
+            <paper-icon-button icon="shopping-cart" arial-label$="Shopping cart: [[_computePluralizedQuantity(6)]]"></paper-icon-button>
+          </a>
+          <div class="cart-badge" aria-hidden="true" hidden$="[[!numItems]]">[[numItems]]</div>
+        </div>
+      </app-toolbar>
+      <paper-search-input
+        id="topSearch"
+        hidden$="[[showSeach]]"
+        executeOnEmpty="false">
+        <span class="label">搜索赛事</span>
+      </paper-search-input>
+    </app-header>
+
+    <hot-data categories="{{categories}}"></hot-data>
+
+    <template is="dom-if" if="[[_shouldRenderDrawer]]">
+      <app-drawer opened="{{drawerOpened}}" swipe-open tabindex="0">
+        <iron-selector role="navigation" class="drawer-list" selected="[[categoryName]]" attr-for-selected="name">
+          <template is="dom-repeat" items="[[categories]]" as="category" initial-count="4">
+            <a name="[[category.name]]" href="/list/[[category.name]]">[[category.name]]</a>
+          </template>
+        </iron-selector>
+      </app-drawer>
+    </template>
+
+    <iron-pages role="main" selected="[[page]]" attr-for-selected="name" selected-attribute="visible" fallback-selection="404">
+      <app-home name="home" categories="[[categories]]"></app-home>
+      <app-list name="list" route="[[subRoute]]"></app-list>
+      <app-404-warn name="404"></app-404-warn>
+    </iron-pages>
+
+    <footer>
+      <i aria-live="assertive">Poly Junior::Message::[[_a11yLabel]]</i>
+    </footer>    
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'polymer-app',
+
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+
+        numItems: {
+          type: Number,
+          value: 0
+        },
+
+        showSeach: {
+          type: Boolean,
+          value: true
+        }, 
+
+        _shouldRenderDrawer: {
+          computed: '_computeShouldRenderDrawer(smallScreen, loadComplete)'
+        }
+      },
+
+      observers: ["_routePageChanged(routeData.page)"],
+
+      listeners: {
+        'show-invalid-url-warning': '_onFallbackSelectionTriggered',
+        'change-section': '_onChangeSection',
+        'announce': '_onAnnounce',
+        'paper-search-input-execute': '_search'
+      },
+
+      _onAnnounce: function(e) {
+        this._announce(e.detail);
+      },
+
+      ready: function () {
+        this.removeAttribute('unresolved');
+      },
+
+      _routePageChanged: function (page) {
+        this.page = page || 'home';
+        this.drawerOpened = false;
+      },
+
+      _onChangeSection: function (event) {
+        console.log(event.detail);
+        var detail = event.detail;
+
+        var scrollTop = 0;
+        if (this.page === 'list' && this.categoryName === detail.category) {
+          scrollTop = this._listScrollTop;
+        }
+
+        Polymer.AppLayout.scroll({ top: scrollTop, behavior: 'silent' });
+
+        this.categoryName = detail.category || '';
+
+        if (detail.title) {
+          document.title = detail.title + ' - App';
+          this._announce(detail.title + ', loaded');
+        }
+      },
+
+      _announce: function(message) {
+        this._a11yLabel = '';
+        this.debounce('_a11yAnnouncer', function() {
+          this._a11yLabel = message;
+        }, 100);
+      },
+
+      _pageChanged: function (page, oldPage) {
+        if (page != null) {
+          if (page == 'home') {
+            this._pageLoaded(Boolean(oldPage));
+          } else {
+            var cb = this._pageLoaded.bind(this, Boolean(oldPage));
+            this.importHref(
+              this.resolveUrl(page + '.html'),
+              cb, cb, true)
+          }
+        }
+      },
+
+      _pageLoaded: function (shouldResetLayout) {
+        this._ensureLazyLoaded();
+        if (shouldResetLayout) {
+          this.async(function () {
+            this.$.header.resetLayout();
+          }, 1)
+        }
+      },
+
+      _ensureLazyLoaded: function () {
+        if (!this.loadComplete) {
+          Polymer.RenderStatus.afterNextRender(this, function () {
+            this.importHref(this.resolveUrl('lazy-resources.html'), function () {
+              this.loadComplete = true;
+            })
+          })
+        }
+      },
+
+      _toggleDrawer: function () {
+        this.drawerOpened = !this.drawerOpened;
+      },
+
+      _computeShouldRenderDrawer: function(smallScreen, loadComplete) {
+        return smallScreen && loadComplete;
+      },
+
+      _computePluralizedQuantity: function (quantity) {
+        return quantity + ' ' + (quantity === 1 ? 'item' : 'items');
+      },
+
+      _onFallbackSelectionTriggered: function() {
+        this.page = '404';
+      },
+
+      _search: function (e, detail) {
+        console.log(detail);
+        this.$.topSearch.focus();
+        this._toggleSeach();
+      },
+
+      _toggleSeach: function () {
+        if (this.showSeach) {
+          this.showSeach = false;
+          this.$.topSearch.notifyResize(5);
+        } else {
+          setTimeout(function () {
+            this.showSeach = true;
+          }.bind(this), 400);
+        }
+      }
+    });
+
+    // TODO add service worker code here
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then(function() { console.log('Service Worker Registered'); });
+    }
+  </script>
+</dom-module>

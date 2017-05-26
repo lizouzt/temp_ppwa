@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="shop-button.html">
+
+<dom-module id="app-404-warn">
+  <template>
+    <style include="shop-button">
+
+      :host {
+        display: block;
+        text-align: center;
+        color: var(--app-secondary-color);
+      }
+
+      paper-icon-button {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+      }
+
+      h1 {
+        margin: 50px 0 50px 0;
+        font-weight: 300;
+      }
+
+    </style>
+
+    <div>
+      <h1>Sorry, we couldn't find that page</h1>
+    </div>
+    <shop-button>
+      <a on-click="_goBack">
+        <paper-icon-button icon="arrow-back" aria-label="Go back"></paper-icon-button>
+      </a>
+    </shop-button>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'app-404-warn',
+      _goBack: function () {
+        window.history.back()
+      }
+    });
+  </script>
+</dom-module>

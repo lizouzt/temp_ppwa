@@ -1,0 +1,181 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="common-style.html">
+<link rel="import" href="hot-data.html">
+<link rel="import" href="shop-image.html">
+
+<dom-module id="app-list">
+	<template>
+		<style include="common-style">
+			.hero-image {
+		        position: relative;
+		        height: 320px;
+		        overflow: hidden;
+		        margin-bottom: 32px;
+		    }
+
+		    .hero-image {
+		        --shop-image-img: {
+		          background-color: red;
+		        }
+		    }
+
+		    .grid {
+		        @apply(--layout-horizontal);
+		        @apply(--layout-wrap);
+		        @apply(--layout-justified);
+		        margin: 0 10px 32px 10px;
+		        padding: 0;
+		        list-style: none;
+		    }
+
+		    .grid li {
+		        -webkit-flex: 1 1;
+		        flex: 1 1;
+		        -webkit-flex-basis: 33%;
+		        flex-basis: 33%;
+		        max-width: 33%;
+		    }
+
+		    .grid a {
+		        display:block;
+		        text-decoration: none;
+		    }
+
+		    @media (max-width: 767px) {
+		        .hero-image {
+		          display: none;
+		        }
+
+		        .grid  li {
+		          -webkit-flex-basis: 50%;
+		          flex-basis: 50%;
+		          max-width: 50%;
+		        }
+		    }
+		    shop-image{
+		    	height: 0;
+		        padding-bottom: 100%;
+		        position: relative;
+		        width: 100%;
+		    }
+		    .item{
+		    	@apply(--layout-vertical);
+		        @apply(--layout-center-justified);
+		        margin: 14px 0;
+		        text-align: center;
+		        --shop-image {
+			        margin: 32px 0 16px;
+			    }
+
+			    --shop-image::before {
+			        content: "";
+			        display: block;
+			        padding-top: 100%;
+			    }
+		    }
+		    .title {
+		        color: var(--app-primary-color);
+		        font-weight: bold;
+		    }
+
+		    .price {
+		        color: var(--app-secondary-color);
+		    }
+		</style>
+
+		<app-route 
+			route="[[route]]"
+			pattern="/:category"
+      		data="{{routeData}}">
+		</app-route>
+
+		<hot-data
+			id="categoryData"
+	        category-name="[[routeData.category]]"
+	        category="{{category}}"
+	        failure="{{failure}}">
+		</hot-data>
+
+		<shop-image
+	        alt="[[category.title]]"
+	        src="[[category.image]]"
+	        placeholder-img="[[category.placeholder]]" class="hero-image"></shop-image>
+
+	    <header>
+	      <h1>[[category.title]]</h1>
+	      <span>[[_getPluralizedQuantity(category.items.length)]]</span>
+	    </header>
+
+	    <ul class="grid" hidden$="[[failure]]">
+	      	<template is="dom-repeat" items="[[_getListItems(category.items)]]" initial-count="4">
+		        <li class="item">
+		          	<a href$="[[_getItemHref(item)]]">
+		          		<shop-image src="[[item.image]]" alt="[[item.title]]"></shop-image>
+				    	<div class="title">[[item.title]]</div>
+				    	<span class="price">[[_formatPrice(item.price)]]</span>
+		          	</a>
+		        </li>
+	      	</template>
+	    </ul>
+
+	</template>
+	
+	<script>
+		Polymer({
+			is: 'app-list',
+			properties: {
+				category: Object,
+				route: Object,
+				routeData: Object,
+				visible: Boolean,
+				failure: {
+					type: Boolean,
+					value: false
+				}
+			},
+			observers: [
+		        '_categoryChanged(category, visible)'
+		    ],
+			ready: function () {
+
+			},
+			_getListItems: function (items) {
+				return items || [{},{},{},{},{},{},{},{}];
+			},
+			_getItemHref: function (item) {
+				return item.name ? ['/detail', this.category.name, item.name].join('/') : null
+			},
+			_getPluralizedQuantity: function (quantity) {
+				if (!quantity) {
+					return '';
+				}
+				var pluralizedQ = quantity === 1 ? 'item' : 'items';
+				return '(' + quantity + ' ' + pluralizedQ + ')'
+			},
+			_categoryChanged: function (category, visible) {
+				if (visible) {
+					if (!category) {
+						this.fire('show-invalid-url-warning');
+					} else {
+						this.debounce('change-section', function () {
+							this.fire('change-section', {
+								category: category.name,
+								title: category.title
+							});
+						})
+					}
+				}
+			},
+			_tryReconnect: function () {
+				this.$.categoryData.refresh();
+			},
+			_formatPrice: function(price) {
+		        return price ? '$' + price.toFixed(2) : '';
+		    }
+		});
+	</script>
+</dom-module>
+
+

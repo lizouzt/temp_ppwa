@@ -1,0 +1,20 @@
+{
+  "name": "polymer",
+  "description": "======app======",
+  "main": "index.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "paper-icon-button": "polymerelements/paper-icon-button#^1.0.0",
+    "app-layout": "polymerelements/app-layout#^0.10.0",
+    "app-route": "polymerelements/app-route#^0.9.1",
+    "paper-search-input": "^1.0.7"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "iron-pages": "polymerelements/iron-pages#^1.0.0",
+    "iron-selector": "polymerelements/iron-selector#^1.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+	"entrypoint": "index.html",
+	"shell": "src/polymer-app/polymer-app.html",
+	"fragments": [
+		"src/polymer-app/list.html"
+	],
+	"sourceGlobs": [
+		"src/**/*",
+		"bower.json"
+	],
+	"includeDependencies": [
+		"manifest.json",
+		"bower_components/webcomponentsjs/webcomponents-lite.min.js"
+	]
+}

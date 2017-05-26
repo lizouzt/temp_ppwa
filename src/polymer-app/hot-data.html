@@ -1,0 +1,124 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="hot-data">
+
+  <script>
+  (function() {
+    var categoryList = [
+      {
+        name: '神秘东南亚',
+        title: '2018东京马拉松',
+        image: '//activity-codoon.b0.upaiyun.com/tms/kMArpre3s2k4mk0K.jpg!640m0',
+        placeholder: 'data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAeAAD/7gAOQWRvYmUAZMAAAAAB/9sAhAAQCwsLDAsQDAwQFw8NDxcbFBAQFBsfFxcXFxcfHhcaGhoaFx4eIyUnJSMeLy8zMy8vQEBAQEBAQEBAQEBAQEBAAREPDxETERUSEhUUERQRFBoUFhYUGiYaGhwaGiYwIx4eHh4jMCsuJycnLis1NTAwNTVAQD9AQEBAQEBAQEBAQED/wAARCAADAA4DASIAAhEBAxEB/8QAXAABAQEAAAAAAAAAAAAAAAAAAAIEAQEAAAAAAAAAAAAAAAAAAAACEAAAAwYHAQAAAAAAAAAAAAAAERMBAhIyYhQhkaEDIwUVNREBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A3dkr5e8tfpwuneJITOzIcmQpit037Bw4mnCVNOpAAQv/2Q=='
+      },
+      {
+        name: '红土澳洲',
+        title: '2017袋鼠岛马拉松',
+        image: '//activity-codoon.b0.upaiyun.com/tms/q7_LFbBnwuIVUJJ9.jpg!640m0',
+        placeholder: 'data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAeAAD/7gAOQWRvYmUAZMAAAAAB/9sAhAAQCwsLDAsQDAwQFw8NDxcbFBAQFBsfFxcXFxcfHhcaGhoaFx4eIyUnJSMeLy8zMy8vQEBAQEBAQEBAQEBAQEBAAREPDxETERUSEhUUERQRFBoUFhYUGiYaGhwaGiYwIx4eHh4jMCsuJycnLis1NTAwNTVAQD9AQEBAQEBAQEBAQED/wAARCAADAA4DASIAAhEBAxEB/8QAWQABAQAAAAAAAAAAAAAAAAAAAAEBAQEAAAAAAAAAAAAAAAAAAAIDEAABAwMFAQAAAAAAAAAAAAARAAEygRIDIlITMwUVEQEBAAAAAAAAAAAAAAAAAAAAQf/aAAwDAQACEQMRAD8Avqn5meQ0kwk1UyclmLtNj7L4PQoioFf/2Q=='
+      },
+      {
+        name: '环太平洋',
+        title: '2017大堡礁马拉松',
+        image: '//activity-codoon.b0.upaiyun.com/tms/0KT1dFwycxz2P2UD.jpg!640m0',
+        placeholder: 'data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAeAAD/7gAOQWRvYmUAZMAAAAAB/9sAhAAQCwsLDAsQDAwQFw8NDxcbFBAQFBsfFxcXFxcfHhcaGhoaFx4eIyUnJSMeLy8zMy8vQEBAQEBAQEBAQEBAQEBAAREPDxETERUSEhUUERQRFBoUFhYUGiYaGhwaGiYwIx4eHh4jMCsuJycnLis1NTAwNTVAQD9AQEBAQEBAQEBAQED/wAARCAADAA4DASIAAhEBAxEB/8QAWwABAQEAAAAAAAAAAAAAAAAAAAMEAQEAAAAAAAAAAAAAAAAAAAAAEAABAwEJAAAAAAAAAAAAAAARAAESEyFhodEygjMUBREAAwAAAAAAAAAAAAAAAAAAAEFC/9oADAMBAAIRAxEAPwDb7kupZU1MTGnvOCgxpvzEXTyRElCmf//Z'
+      },
+      {
+        name: '神秘东南亚',
+        title: '2017横滨马拉松',
+        image: '//activity-codoon.b0.upaiyun.com/tms/gGvUr05s3fggO7XO.jpg!640m0',
+        placeholder: 'data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAeAAD/7gAOQWRvYmUAZMAAAAAB/9sAhAAQCwsLDAsQDAwQFw8NDxcbFBAQFBsfFxcXFxcfHhcaGhoaFx4eIyUnJSMeLy8zMy8vQEBAQEBAQEBAQEBAQEBAAREPDxETERUSEhUUERQRFBoUFhYUGiYaGhwaGiYwIx4eHh4jMCsuJycnLis1NTAwNTVAQD9AQEBAQEBAQEBAQED/wAARCAADAA4DASIAAhEBAxEB/8QAXwABAQEAAAAAAAAAAAAAAAAAAAMFAQEBAAAAAAAAAAAAAAAAAAABAhAAAQIDCQAAAAAAAAAAAAAAEQABITETYZECEjJCAzMVEQACAwAAAAAAAAAAAAAAAAAAATFBgf/aAAwDAQACEQMRAD8AzeADAZiFc5J7BC9Scek3VrtooilSNaf/2Q=='
+      }
+    ];
+
+    Polymer({
+      is: 'hot-data',
+
+      properties: {
+        categoryName: String,
+        itemName: String,
+        categories: {
+          type: Array,
+          value: categoryList,
+          readOnly: true,
+          notify: true
+        },
+        category: {
+          type: Object,
+          computed: '_computeCategory(categoryName)',
+          notify: true
+        },
+        item: {
+          type: Object,
+          computed: '_computeItem(category.item, itemName)',
+          notify: true
+        },
+        failure: {
+          type: Boolean,
+          notify: true,
+          readOnly: true
+        }
+      },
+
+      _getCategoryObject: function (categoryName) {
+        console.log(categoryName);
+        for (var i = 0, c; c = this.categories[i]; ++i) {
+          if (c.name == categoryName) {
+            return c;
+          }
+        }
+      },
+      _computeCategory: function(categoryName) {
+        var categoryObj = this._getCategoryObject(categoryName);
+        this._fetchItems(categoryObj, 1);
+        return categoryObj;
+      },
+      _computeItem: function(items, itemName) {
+        for (var i = 0, item; item = items[i]; ++i) {
+          if (item.name === itemName) {
+            return item;
+          }
+        }
+      },
+      _fetchItems: function(category, attempts) {
+        this._setFailure(false);
+
+        if (!category || category.items) {
+          console.log('Already have it.');
+          return;
+        }
+        this._getResource({
+          url: '/data/' + category.name + '.json',
+          onLoad: function(e) {
+            this.set('category.items', JSON.parse(e.target.responseText));
+          },
+          onError: function(e) {
+            this._setFailure(true);
+          }
+        }, attempts);
+      },
+      _getResource: function(rq, attempts) {
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', rq.onLoad.bind(this));
+        xhr.addEventListener('error', function(e) {
+          if (attempts > 1) {
+            this.debounce('_getResource', this._getResource.bind(this, rq, attempts - 1), 200);
+          } else {
+            rq.onError.call(this, e);
+          }
+        }.bind(this));
+
+        xhr.open('GET', rq.url);
+        xhr.send();
+      },
+      refresh: function() {
+        if (this.categoryName) {
+          this._fetchItems(this._getCategoryObject(this.categoryName), 3);
+        }
+      }
+    })
+})();
+</script>
+</dom-module>
+
+
