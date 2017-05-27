@@ -1,4 +1,4 @@
-var cacheName = 'THISISMYPPAP_0.0.1';
+var cacheName = 'THISISMYPPAP_0.0.3';
 var filesToCache = [
 	'/',
 	'/index.html',

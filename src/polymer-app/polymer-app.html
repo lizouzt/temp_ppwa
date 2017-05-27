@@ -398,6 +398,33 @@
 
       console.log('Send a push request directly to the endpoint::');
       console.log(curlCommand);
+
+      navigator.serviceWorker.ready.then(function(serviceWorker) {
+        return serviceWorker.showNotification('Notification title', {
+                "dir": "ltr",
+                "body": "Notification content",
+                "tag": "",
+                "image": "",
+                "icon": "/data/icons/shop-icon-128.png",
+                "badge": "/data/icons/mens_tshirts.jpg",
+                "renotify": false,
+                "silent": false,
+                "persistent": true,
+                "requireInteraction": false,
+                "sticky": false,
+                "notificationCloseEvent": false,
+                "data": {
+                    "options": {
+                        "action": "default",
+                        "close": true,
+                        "notificationCloseEvent": false,
+                        "url": "http://localhost:3300"
+                    }
+                }
+            })
+      }).catch(function (exception) {
+        console.error(exception);
+      });
     }
 
     var subscribe = function () {
@@ -440,6 +467,8 @@
               subscribe();
               return;
             }
+
+            sendSubscriptionToServer(subscription);
           })
           .catch(function(err) {
             console.log('Error during getSubscription()', err);
